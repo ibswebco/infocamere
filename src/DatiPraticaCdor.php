@@ -4,7 +4,7 @@ namespace Infocamere\EGov;
 
 class DatiPraticaCdor
 {
-    private $desrizione;
+    private $descrizione;
     private $cciaaCompetenza;
     private $codiceSedeDistaccata;
     private $tipoPratica;
@@ -13,7 +13,7 @@ class DatiPraticaCdor
 
     public function __construct()
     {
-        $this->desrizione = null;
+        $this->descrizione = null;
         $this->cciaaCompetenza = null;
         $this->codiceSedeDistaccata = null;
         $this->tipoPratica = null;
