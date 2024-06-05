@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'infocamere/egov',
-        'pretty_version' => '1.3.7',
-        'version' => '1.3.7.0',
+        'pretty_version' => '1.3.8',
+        'version' => '1.3.8.0',
         'reference' => NULL,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'infocamere/egov' => array(
-            'pretty_version' => '1.3.7',
-            'version' => '1.3.7.0',
+            'pretty_version' => '1.3.8',
+            'version' => '1.3.8.0',
             'reference' => NULL,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',

@@ -1,14 +1,14 @@
 {
-    "name": "infocamere/egov",
-    "version": "1.3.8",
-    "description": "Webservice Infocamere per utilizzo pratiche EGov",
-    "require": {
-        "php": "^7.2|^8.0",
-        "mashape/unirest-php": "3.*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Infocamere\\EGov\\": "src/"
-        }
+  "name": "infocamere/egov",
+  "version": "1.4.0",
+  "description": "Webservice Infocamere per utilizzo pratiche EGov",
+  "require": {
+    "php": "^8.2",
+    "mashape/unirest-php": "3.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Infocamere\\EGov\\": "src/"
     }
+  }
 }
