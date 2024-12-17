@@ -113,7 +113,7 @@ class FPWSClient
         $response = $this->client->put('pratica/creaA2A', [
             'json' => $this->dataMob,
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function creaPraticaServiceUser(CreaPraticaRequest $dataMob, $userIdOperativo)
@@ -138,7 +138,7 @@ class FPWSClient
             ],
             'json' => $this->dataMob,
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -164,7 +164,7 @@ class FPWSClient
             ],
             'json' => $this->dataAll,
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function aggiungiAllegatoServiceUser($idPratica, AggiungiAllegatoRequest $aggiungiAllegatoRequest, $userIdOperativo)
@@ -183,7 +183,7 @@ class FPWSClient
             ],
             'json' => $this->dataAll,
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -202,8 +202,7 @@ class FPWSClient
                 'idPratica' => $idPratica,
             ],
         ]);
-        return $response->getBody();
-        
+        return $this->jsonBody($response->getBody());
     }
 
     public function inviaPraticaServiceUser($idPratica, $userIdOperativo)
@@ -216,7 +215,7 @@ class FPWSClient
                 'userIdOperativo' => $userIdOperativo,
             ],
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -235,7 +234,7 @@ class FPWSClient
                 'idPratica' => $idPratica,
             ],
         ]);
-        return $response->getBody();
+       return $this->jsonBody($response->getBody());
     }
 
     public function annullaPraticaServiceUser($idPratica, $userIdOperativo)
@@ -248,9 +247,8 @@ class FPWSClient
                 'userIdOperativo' => $userIdOperativo,
             ],
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
-
 
     /**
      * Fornisce lista delle pratiche relative a un utente con relativi dati informativi. Permette la selezione in base a parametri impostati
@@ -272,7 +270,7 @@ class FPWSClient
         $response = $this->client->post('pratica/listaPraticheA2A', [
             'json' => $this->dataPrt
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function listaPraticheServiceUser(ListaPraticheRequest $listaPraticheRequest, $userIdOperativo)
@@ -290,7 +288,7 @@ class FPWSClient
             ],
             'json' => $this->dataPrt
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -312,8 +310,7 @@ class FPWSClient
         $response = $this->client->post('pratica/listaRettificheRichiesteA2A', [
             'json' => $this->dataPrt
         ]);
-        return $response->getBody();
-
+        return $this->jsonBody($response->getBody());
     }
 
     public function listaRettificheRichiesteServiceUser(ListaPraticheRequest $listaPraticheRequest, $userIdOperativo)
@@ -331,7 +328,7 @@ class FPWSClient
             ],
             'json' => $this->dataPrt
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -358,7 +355,7 @@ class FPWSClient
             ],
             'json' => $this->dataAll
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function rettificaAllegatoServiceUser($idPratica, AggiungiAllegatoRequest $aggiungiAllegatoRequest, $userIdOperativo)
@@ -379,7 +376,7 @@ class FPWSClient
             ],
             'json' => $this->dataAll
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -398,7 +395,7 @@ class FPWSClient
                 'idPratica' => $idPratica
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function trasmettiRettificaServiceUser($idPratica, $userIdOperativo)
@@ -411,7 +408,7 @@ class FPWSClient
                 'userIdOperativo' => $userIdOperativo,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -432,7 +429,7 @@ class FPWSClient
                 'note' => $note,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -449,7 +446,7 @@ class FPWSClient
                 'siglaProvincia' => $tipoSportello,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function listaSportelliServiceUser($tipoSportello, $userIdOperativo)
@@ -462,7 +459,7 @@ class FPWSClient
                 'userIdOperativo' => $userIdOperativo,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -484,7 +481,7 @@ class FPWSClient
                 'cciaa' => $cciaa,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
     }
 
     public function listaSediDistaccateServiceUser($cciaa, $tipoSportello, $userIdOperativo)
@@ -499,7 +496,16 @@ class FPWSClient
                 'userIdOperativo' => $userIdOperativo,
             ]
         ]);
-        return $response->getBody();
+        return $this->jsonBody($response->getBody());
+    }
+
+    private function jsonBody($body)
+    {
+        if (!is_null($body)) {
+            return json_decode($body->getContents());
+        }
+
+        return null;
     }
 
     /*private function queryParam($param)
