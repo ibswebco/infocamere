@@ -198,6 +198,7 @@ class FPWSClient
         $this->dataPrt['aperte'] = $listaPraticheRequest->getAperte();
         $this->dataPrt['filtri'] = $listaPraticheRequest->getFiltri();
 
+        \Unirest\Request::timeout(30);
         $request = \Unirest\Request::post($this->url.'pratica/listaPraticheA2A', [], json_encode($this->dataPrt));
         return $request->body;
     }
