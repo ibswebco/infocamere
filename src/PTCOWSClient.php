@@ -2,12 +2,15 @@
 
 namespace Infocamere\EGov;
 
+use GuzzleHttp\Client;
+
 /**
 * Webservice PTCOWS per dati informativi Certificati di origine 
 */
 class PTCOWSClient
 {
     private $url = 'https://praticaegovws.infocamere.it:52443/ptcows/';
+    
     private $data = [
         'user' => null,
         'passwd' => null,
@@ -15,15 +18,26 @@ class PTCOWSClient
         'cciaa' => null,
     ];
 
+    private $client = null;
+
     /**
      * @param string $username
      * @param string $password
      */
     public function __construct($username, $password)
     {
-        \Unirest\Request::defaultHeaders([
+        /*\Unirest\Request::defaultHeaders([
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json'
+        ]);*/
+
+         $this->client = new Client([
+            'base_uri' => $this->url,
+            'timeout'  => 30.0,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ],
         ]);
 
         $this->data['user']   = $username;
@@ -37,8 +51,10 @@ class PTCOWSClient
      */
     public function getStatus()
     {
-        $request = \Unirest\Request::get($this->url.'getStatus');
-        return $request->body;
+        /*$request = \Unirest\Request::get($this->url.'getStatus');
+        return $request->body;*/
+        $response = $this->client->get('getStatus');
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -57,8 +73,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
         
-        $request = \Unirest\Request::post($this->url.'checkPagamentoDifferito', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'checkPagamentoDifferito', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkPagamentoDifferito', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -79,8 +99,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
         
-        $request = \Unirest\Request::post($this->url.'checkRettificaModelloBase', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'checkRettificaModelloBase', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkRettificaModelloBase', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -96,8 +120,12 @@ class PTCOWSClient
         $this->data['cciaa'] = strtoupper($cciaa);
         $this->data['codFiscale'] = $cf;
         
-        $request = \Unirest\Request::post($this->url.'checkStampaAzienda', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'checkStampaAzienda', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkStampaAzienda', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -116,8 +144,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
         
-        $request = \Unirest\Request::post($this->url.'checkUrgenze', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'checkUrgenze', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkUrgenze', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -141,8 +173,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
         
-        $request = \Unirest\Request::post($this->url.'getNumeroMaxPraticheUrgentiAnno', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'getNumeroMaxPraticheUrgentiAnno', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('getNumeroMaxPraticheUrgentiAnno', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -166,8 +202,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
         
-        $request = \Unirest\Request::post($this->url.'getNumeroPraticheInviateUrgentiAnno', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'getNumeroPraticheInviateUrgentiAnno', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('getNumeroPraticheInviateUrgentiAnno', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -186,8 +226,12 @@ class PTCOWSClient
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
 
-        $request = \Unirest\Request::post($this->url.'checkSupportoFormulario', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'checkSupportoFormulario', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkSupportoFormulario', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -206,7 +250,21 @@ class PTCOWSClient
         if (!is_null($utenteOperativo)) {
             $this->data['utenteOperativo'] = $utenteOperativo;
         }
-        $request = \Unirest\Request::post($this->url.'checkSupportoFoglioBianco', [], \Unirest\Request\Body::json($this->data));
-        return $request->body;
+        
+        /*$request = \Unirest\Request::post($this->url.'checkSupportoFoglioBianco', [], \Unirest\Request\Body::json($this->data));
+        return $request->body;*/
+        $response = $this->client->post('checkSupportoFoglioBianco', [
+            'json' => $this->data
+        ]);
+        return $this->jsonBody($response->getBody());
+    }
+
+    private function jsonBody($body)
+    {
+        if (!is_null($body)) {
+            return json_decode($body->getContents());
+        }
+
+        return null;
     }
 }

@@ -1,10 +1,9 @@
 {
   "name": "infocamere/egov",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Webservice Infocamere per utilizzo pratiche EGov",
   "require": {
     "php": "^8.2",
-    "mashape/unirest-php": "3.*",
     "guzzlehttp/guzzle": "^7.8.2"
   },
   "autoload": {
