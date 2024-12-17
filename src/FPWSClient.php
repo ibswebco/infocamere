@@ -2,6 +2,7 @@
 
 namespace Infocamere\EGov;
 
+use GuzzleHttp\Client;
 
 /**
  * Webservice FPWS per la comunicazione di pratiche telematiche EGov
@@ -9,6 +10,7 @@ namespace Infocamere\EGov;
 class FPWSClient
 {
     private $url = "https://praticaegovws.infocamere.it:52443/fpbews/";
+    
     private $dataMob = [
         'mobFirmato' => true,
         'modelloBaseB64' => null,
@@ -60,6 +62,8 @@ class FPWSClient
         'descrizioneAllegato' => null,
         'allegatoFileName' => null,
     ];
+
+    private $client = null;
     
     /**
      * @param string $username
@@ -67,11 +71,21 @@ class FPWSClient
      */
     public function __construct($username, $password)
     {
-        \Unirest\Request::defaultHeaders([
+        /*\Unirest\Request::defaultHeaders([
             'FPWS-UserId' => $username,
             'FPWS-Password' => $password,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json'
+        ]);*/
+        $this->client = new Client([
+            'base_uri' => $this->url,
+            'timeout'  => 30.0,
+            'headers' => [
+                'FPWS-UserId' => $username,
+                'FPWS-Password' => $password,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ],
         ]);
     }
 
@@ -94,8 +108,12 @@ class FPWSClient
         $this->dataMob['datiPratica']['datiImpresa']['denominazione'] = $dataMob->getDatiPratica()->getDatiImpresa()->getDenominazione();
         $this->dataMob['datiPratica']['datiImpresa']['provincia'] = $dataMob->getDatiPratica()->getDatiImpresa()->getProvincia();
 
-        $request = \Unirest\Request::put($this->url.'pratica/creaA2A', [], \Unirest\Request\Body::json($this->dataMob));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/creaA2A', [], \Unirest\Request\Body::json($this->dataMob));
+        return $request->body;*/
+        $response = $this->client->put('pratica/creaA2A', [
+            'json' => $this->dataMob,
+        ]);
+        return $response->getBody();
     }
 
     public function creaPraticaServiceUser(CreaPraticaRequest $dataMob, $userIdOperativo)
@@ -111,8 +129,16 @@ class FPWSClient
         $this->dataMob['datiPratica']['datiImpresa']['denominazione'] = $dataMob->getDatiPratica()->getDatiImpresa()->getDenominazione();
         $this->dataMob['datiPratica']['datiImpresa']['provincia'] = $dataMob->getDatiPratica()->getDatiImpresa()->getProvincia();
 
-        $request = \Unirest\Request::put($this->url.'pratica/creaA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataMob));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/creaA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataMob));
+        return $request->body;*/
+
+        $response = $this->client->put('pratica/creaA2AServiceUser', [
+            'query' => [
+                'userIdOperativo' => $userIdOperativo
+            ],
+            'json' => $this->dataMob,
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -130,8 +156,15 @@ class FPWSClient
         $this->dataAll['descrizioneAllegato'] = $aggiungiAllegatoRequest->getDescrizioneAllegato();
         $this->dataAll['tipoAllegato'] = $aggiungiAllegatoRequest->getTipoAllegato();
         
-        $request = \Unirest\Request::put($this->url.'pratica/aggiungiAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica]), [], json_encode($this->dataAll));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/aggiungiAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica]), [], json_encode($this->dataAll));
+        return $request->body;*/
+        $response = $this->client->put('pratica/aggiungiAllegatoA2A', [
+            'query' => [
+                'idPratica' => $idPratica,
+            ],
+            'json' => $this->dataAll,
+        ]);
+        return $response->getBody();
     }
 
     public function aggiungiAllegatoServiceUser($idPratica, AggiungiAllegatoRequest $aggiungiAllegatoRequest, $userIdOperativo)
@@ -141,8 +174,16 @@ class FPWSClient
         $this->dataAll['descrizioneAllegato'] = $aggiungiAllegatoRequest->getDescrizioneAllegato();
         $this->dataAll['tipoAllegato'] = $aggiungiAllegatoRequest->getTipoAllegato();
         
-        $request = \Unirest\Request::put($this->url.'pratica/aggiungiAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataAll));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/aggiungiAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataAll));
+        return $request->body;*/
+        $response = $this->client->put('pratica/aggiungiAllegatoA2AServiceUser', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'userIdOperativo' => $userIdOperativo,
+            ],
+            'json' => $this->dataAll,
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -154,14 +195,28 @@ class FPWSClient
      */
     public function inviaPratica($idPratica)
     {
-        $request = \Unirest\Request::post($this->url.'pratica/inviaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/inviaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
+        return $request->body;*/
+        $response = $this->client->post('pratica/inviaA2A', [
+            'query' => [
+                'idPratica' => $idPratica,
+            ],
+        ]);
+        return $response->getBody();
+        
     }
 
     public function inviaPraticaServiceUser($idPratica, $userIdOperativo)
     {
-        $request = \Unirest\Request::post($this->url.'pratica/inviaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/inviaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
+        return $request->body;*/
+        $response = $this->client->post('pratica/inviaA2AServiceUser', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'userIdOperativo' => $userIdOperativo,
+            ],
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -173,14 +228,27 @@ class FPWSClient
      */
     public function annullaPratica($idPratica)
     {
-        $request = \Unirest\Request::delete($this->url.'pratica/annullaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::delete($this->url.'pratica/annullaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
+        return $request->body;*/
+        $response = $this->client->delete('pratica/annullaA2A', [
+            'query' => [
+                'idPratica' => $idPratica,
+            ],
+        ]);
+        return $response->getBody();
     }
 
     public function annullaPraticaServiceUser($idPratica, $userIdOperativo)
     {
-        $request = \Unirest\Request::delete($this->url.'pratica/annullaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::delete($this->url.'pratica/annullaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
+        return $request->body;*/
+        $response = $this->client->delete('pratica/annullaA2AServiceUser', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'userIdOperativo' => $userIdOperativo,
+            ],
+        ]);
+        return $response->getBody();
     }
 
 
@@ -198,9 +266,13 @@ class FPWSClient
         $this->dataPrt['aperte'] = $listaPraticheRequest->getAperte();
         $this->dataPrt['filtri'] = $listaPraticheRequest->getFiltri();
 
-        \Unirest\Request::timeout(30);
+        /*\Unirest\Request::timeout(30);
         $request = \Unirest\Request::post($this->url.'pratica/listaPraticheA2A', [], json_encode($this->dataPrt));
-        return $request->body;
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaPraticheA2A', [
+            'json' => $this->dataPrt
+        ]);
+        return $response->getBody();
     }
 
     public function listaPraticheServiceUser(ListaPraticheRequest $listaPraticheRequest, $userIdOperativo)
@@ -210,8 +282,15 @@ class FPWSClient
         $this->dataPrt['aperte'] = $listaPraticheRequest->getAperte();
         $this->dataPrt['filtri'] = $listaPraticheRequest->getFiltri();
 
-        $request = \Unirest\Request::post($this->url.'pratica/listaPraticheA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataPrt));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/listaPraticheA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataPrt));
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaPraticheA2A', [
+            'query' => [
+                'userIdOperativo' => $userIdOperativo,
+            ],
+            'json' => $this->dataPrt
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -228,8 +307,13 @@ class FPWSClient
         $this->dataPrt['aperte'] = $listaPraticheRequest->getAperte();
         $this->dataPrt['filtri'] = $listaPraticheRequest->getFiltri();
 
-        $request = \Unirest\Request::post($this->url.'pratica/listaRettificheRichiesteA2A', [], json_encode($this->dataPrt));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/listaRettificheRichiesteA2A', [], json_encode($this->dataPrt));
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaRettificheRichiesteA2A', [
+            'json' => $this->dataPrt
+        ]);
+        return $response->getBody();
+
     }
 
     public function listaRettificheRichiesteServiceUser(ListaPraticheRequest $listaPraticheRequest, $userIdOperativo)
@@ -239,8 +323,15 @@ class FPWSClient
         $this->dataPrt['aperte'] = $listaPraticheRequest->getAperte();
         $this->dataPrt['filtri'] = $listaPraticheRequest->getFiltri();
 
-        $request = \Unirest\Request::post($this->url.'pratica/listaRettificheRichiesteA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataPrt));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/listaRettificheRichiesteA2AServiceUser'.$this->queryParam(['userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataPrt));
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaRettificheRichiesteA2AServiceUser', [
+            'query' => [
+                'userIdOperativo' => $userIdOperativo,
+            ],
+            'json' => $this->dataPrt
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -259,8 +350,15 @@ class FPWSClient
         $this->dataAll['tipoAllegato'] = $aggiungiAllegatoRequest->getTipoAllegato();
         $this->dataAll['rettificaModelloBase'] = $aggiungiAllegatoRequest->isRettificaModelloBase();
         
-        $request = \Unirest\Request::put($this->url.'pratica/rettificaAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica]), [], json_encode($this->dataAll));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/rettificaAllegatoA2A'.$this->queryParam(['idPratica' => $idPratica]), [], json_encode($this->dataAll));
+        return $request->body;*/
+        $response = $this->client->put('pratica/rettificaAllegatoA2A', [
+            'query' => [
+                'idPratica' => $idPratica
+            ],
+            'json' => $this->dataAll
+        ]);
+        return $response->getBody();
     }
 
     public function rettificaAllegatoServiceUser($idPratica, AggiungiAllegatoRequest $aggiungiAllegatoRequest, $userIdOperativo)
@@ -271,8 +369,17 @@ class FPWSClient
         $this->dataAll['tipoAllegato'] = $aggiungiAllegatoRequest->getTipoAllegato();
         $this->dataAll['rettificaModelloBase'] = $aggiungiAllegatoRequest->isRettificaModelloBase();
         
-        $request = \Unirest\Request::put($this->url.'pratica/rettificaAllegatoA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataAll));
-        return $request->body;
+        /*$request = \Unirest\Request::put($this->url.'pratica/rettificaAllegatoA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), [], json_encode($this->dataAll));
+        return $request->body;*/
+
+        $response = $this->client->put('pratica/rettificaAllegatoA2AServiceUser', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'userIdOperativo' => $userIdOperativo,
+            ],
+            'json' => $this->dataAll
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -284,14 +391,27 @@ class FPWSClient
      */
     public function trasmettiRettifica($idPratica)
     {
-        $request = \Unirest\Request::post($this->url.'pratica/trasmettiRettificaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/trasmettiRettificaA2A'.$this->queryParam(['idPratica' => $idPratica]), []);
+        return $request->body;*/
+        $response = $this->client->post('pratica/rettificaAllegatoA2A', [
+            'query' => [
+                'idPratica' => $idPratica
+            ]
+        ]);
+        return $response->getBody();
     }
 
     public function trasmettiRettificaServiceUser($idPratica, $userIdOperativo)
     {
-        $request = \Unirest\Request::post($this->url.'pratica/trasmettiRettificaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/trasmettiRettificaA2AServiceUser'.$this->queryParam(['idPratica' => $idPratica, 'userIdOperativo' => $userIdOperativo]), []);
+        return $request->body;*/
+        $response = $this->client->post('pratica/trasmettiRettificaA2AServiceUser', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'userIdOperativo' => $userIdOperativo,
+            ]
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -304,8 +424,15 @@ class FPWSClient
      */
     public function aggiornaNote($idPratica, $note)
     {
-        $request = \Unirest\Request::post($this->url.'pratica/aggiornaNoteA2A'.$this->queryParam(['idPratica' => $idPratica, 'note' => $note]), []);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'pratica/aggiornaNoteA2A'.$this->queryParam(['idPratica' => $idPratica, 'note' => $note]), []);
+        return $request->body;*/
+        $response = $this->client->post('pratica/aggiornaNoteA2A', [
+            'query' => [
+                'idPratica' => $idPratica,
+                'note' => $note,
+            ]
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -315,14 +442,27 @@ class FPWSClient
      */
     public function listaSportelli($tipoSportello)
     {
-        $request = \Unirest\Request::post($this->url.'sportelloUtil/listaA2A?siglaProvincia='.$tipoSportello);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'sportelloUtil/listaA2A?siglaProvincia='.$tipoSportello);
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaA2A', [
+            'query' => [
+                'siglaProvincia' => $tipoSportello,
+            ]
+        ]);
+        return $response->getBody();
     }
 
     public function listaSportelliServiceUser($tipoSportello, $userIdOperativo)
     {
-        $request = \Unirest\Request::post($this->url.'sportelloUtil/listaA2AServiceUser'.$this->queryParam(['siglaProvincia' => $tipoSportello, 'userIdOperativo' => $userIdOperativo]));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'sportelloUtil/listaA2AServiceUser'.$this->queryParam(['siglaProvincia' => $tipoSportello, 'userIdOperativo' => $userIdOperativo]));
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaA2AServiceUser', [
+            'query' => [
+                'siglaProvincia' => $tipoSportello,
+                'userIdOperativo' => $userIdOperativo,
+            ]
+        ]);
+        return $response->getBody();
     }
 
     /**
@@ -336,18 +476,33 @@ class FPWSClient
     public function listaSediDistaccate($cciaa, $tipoSportello)
     {
         $cciaa = strtoupper($cciaa);
-        $request = \Unirest\Request::post($this->url.'sportelloUtil/listaSediA2A?cciaa='.$cciaa.'&siglaProvincia='.$tipoSportello);
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'sportelloUtil/listaSediA2A?cciaa='.$cciaa.'&siglaProvincia='.$tipoSportello);
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaSediA2A', [
+            'query' => [
+                'siglaProvincia' => $tipoSportello,
+                'cciaa' => $cciaa,
+            ]
+        ]);
+        return $response->getBody();
     }
 
     public function listaSediDistaccateServiceUser($cciaa, $tipoSportello, $userIdOperativo)
     {
         $cciaa = strtoupper($cciaa);
-        $request = \Unirest\Request::post($this->url.'sportelloUtil/listaSediA2AServiceUser'.$this->queryParam(['cciaa' => $cciaa, 'siglaProvincia' => $tipoSportello, 'userIdOperativo' => $userIdOperativo]));
-        return $request->body;
+        /*$request = \Unirest\Request::post($this->url.'sportelloUtil/listaSediA2AServiceUser'.$this->queryParam(['cciaa' => $cciaa, 'siglaProvincia' => $tipoSportello, 'userIdOperativo' => $userIdOperativo]));
+        return $request->body;*/
+        $response = $this->client->post('pratica/listaSediA2A', [
+            'query' => [
+                'siglaProvincia' => $tipoSportello,
+                'cciaa' => $cciaa,
+                'userIdOperativo' => $userIdOperativo,
+            ]
+        ]);
+        return $response->getBody();
     }
 
-    private function queryParam($param)
+    /*private function queryParam($param)
     {
         $ret = "?";
         if (is_array($param)) {
@@ -361,5 +516,5 @@ class FPWSClient
             $ret .= $param;
         }
         return $ret;
-    }
+    }*/
 }
