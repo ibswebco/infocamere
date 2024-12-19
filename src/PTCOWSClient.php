@@ -267,7 +267,7 @@ class PTCOWSClient
     }
 
     private function jsonBody($body)
-    {
+    {        
         if (!is_null($body)) {
             return json_decode($body->getContents());
         }
