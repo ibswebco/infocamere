@@ -32,6 +32,7 @@ class PTCOWSClient
         $this->client = new Client([
             'base_uri' => $this->url,
             'timeout'  => 30.0,
+            'http_errors' => false,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
@@ -115,12 +116,11 @@ class PTCOWSClient
         $this->data['cciaa'] = strtoupper($cciaa);
         $this->data['codFiscale'] = $cf;
 
-        /*$response = $this->client->post('checkStampaAzienda', [
+        $response = $this->client->post('checkStampaAzienda', [
             'json' => $this->data
         ]);
         
-        return $this->jsonBody($response->getBody());*/
-        return $this->sendRequest('post', 'checkStampaAzienda', $this->data);
+        return $this->jsonBody($response->getBody());
     }
 
     /**
@@ -258,11 +258,11 @@ class PTCOWSClient
             
             return $this->jsonBody($response->getBody());
         } catch (ClientException $e) {
-            return $e->getMessage();
+            return $e->getResponse(); //getMessage()
         } catch (ServerException $e) {
-            return $e->getMessage();
+            return $e->getResponse();
         } catch (RequestException $e) {
-            return $e->getMessage();
+            return $e->getResponse();
         }
     }
 
