@@ -258,11 +258,11 @@ class PTCOWSClient
             
             return $this->jsonBody($response->getBody());
         } catch (ClientException $e) {
-            return $this->jsonBody($e->getMessage());
+            return $e->getMessage();
         } catch (ServerException $e) {
-            return $this->jsonBody($e->getMessage());
+            return $e->getMessage();
         } catch (RequestException $e) {
-            return $this->jsonBody($e->getMessage());
+            return $e->getMessage();
         }
     }
 
