@@ -74,6 +74,7 @@ class FPWSClient
         $this->client = new Client([
             'base_uri' => $this->url,
             'timeout'  => 30.0,
+            'http_errors' => false,
             'headers' => [
                 'FPWS-UserId' => $username,
                 'FPWS-Password' => $password,
