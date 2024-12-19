@@ -253,16 +253,16 @@ class PTCOWSClient
     {
         try {
             $response = $this->client->request(strtoupper($method), $uri, [
-                'json' => $doby
+                'json' => $body
             ]);
             
             return $this->jsonBody($response->getBody());
         } catch (ClientException $e) {
-            return $this->jsonBody($response->getBody());
+            return $this->jsonBody($e->getMessage());
         } catch (ServerException $e) {
-            return $this->jsonBody($response->getBody());
+            return $this->jsonBody($e->getMessage());
         } catch (RequestException $e) {
-            return $this->jsonBody(null);
+            return $this->jsonBody($e->getMessage());
         }
     }
 
