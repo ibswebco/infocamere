@@ -3,6 +3,9 @@
 namespace Infocamere\EGov;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
 * Webservice PTCOWS per dati informativi Certificati di origine 
@@ -112,11 +115,12 @@ class PTCOWSClient
         $this->data['cciaa'] = strtoupper($cciaa);
         $this->data['codFiscale'] = $cf;
 
-        $response = $this->client->post('checkStampaAzienda', [
+        /*$response = $this->client->post('checkStampaAzienda', [
             'json' => $this->data
         ]);
         
-        return $this->jsonBody($response->getBody());
+        return $this->jsonBody($response->getBody());*/
+        return $this->sendRequest('post', 'checkStampaAzienda', $this->data);
     }
 
     /**
@@ -243,6 +247,23 @@ class PTCOWSClient
         ]);
         
         return $this->jsonBody($response->getBody());
+    }
+
+    private function sendRequest(string $method, string $uri, array $body)
+    {
+        try {
+            $response = $this->client->request(strtoupper($method), $uri, [
+                'json' => $doby
+            ]);
+            
+            return $this->jsonBody($response->getBody());
+        } catch (ClientException $e) {
+            return $this->jsonBody($response->getBody());
+        } catch (ServerException $e) {
+            return $this->jsonBody($response->getBody());
+        } catch (RequestException $e) {
+            return $this->jsonBody(null);
+        }
     }
 
     private function jsonBody($body)
