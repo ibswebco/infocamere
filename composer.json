@@ -1,6 +1,6 @@
 {
   "name": "infocamere/egov",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Webservice Infocamere per utilizzo pratiche EGov",
   "require": {
     "php": "^8.2",
