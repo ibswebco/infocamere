@@ -69,7 +69,7 @@ class FPWSClient
      * @param string $username
      * @param string $password
      */
-    public function __construct($username, $password, $timeot = '30.0')
+    public function __construct($username, $password, $timeout = '30.0')
     {
         $this->client = new Client([
             'base_uri' => $this->url,
